@@ -3,189 +3,293 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AppForge – App-Builder</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AppForge Studio</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#141c30;--line:#27334d;--blue:#6ea8fe;--text:#eef3ff;--muted:#9ba9c4}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,Arial,sans-serif}
-header{padding:25px 18px;background:linear-gradient(135deg,#17264a,#101629);border-bottom:1px solid var(--line)}
-.brand{font-size:24px;font-weight:800;letter-spacing:-.5px}
-.brand span{color:var(--blue)}
-header p{color:var(--muted);margin-bottom:0}
-main{max-width:850px;margin:auto;padding:18px}
-h2{font-size:19px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;margin:16px 0}
-label{display:block;margin:14px 0 7px;color:#dce6ff;font-size:14px}
-input,textarea,select{width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;background:#0d1425;color:var(--text);font:inherit}
-textarea{min-height:90px;resize:vertical}
-button{border:0;border-radius:10px;padding:12px 15px;background:var(--blue);color:#071226;font-size:15px;font-weight:700;cursor:pointer}
-button.secondary{background:#26344f;color:var(--text)}
-button.danger{background:#482832;color:#ffdbe0}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.project{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px}
-.project h3{margin:0 0 7px;overflow-wrap:anywhere}
-.project p{color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
-.tag{display:inline-block;padding:5px 8px;background:#243453;color:#c9ddff;border-radius:7px;font-size:12px}
-.muted{color:var(--muted);font-size:14px}
-#preview{width:100%;height:360px;background:white;border:0;border-radius:10px}
-footer{text-align:center;color:var(--muted);padding:25px;font-size:13px}
+body{margin:0;background:#0b1020;color:#eef3ff;font:16px -apple-system,BlinkMacSystemFont,Arial,sans-serif}
+header{padding:23px 17px;background:#121d37;border-bottom:1px solid #293653}
+.logo{font-size:26px;font-weight:800}.logo span{color:#72aaff}
+header p,.muted{color:#9cabc7;font-size:14px}
+main{max-width:900px;margin:auto;padding:16px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+button{border:0;border-radius:9px;background:#75aaff;color:#091326;font-weight:700;padding:12px;cursor:pointer}
+nav button,.secondary{background:#24334f;color:#eef3ff}
+.panel{background:#141d31;border:1px solid #2a3753;border-radius:15px;padding:16px;margin-bottom:16px}
+h2{font-size:19px;margin-top:0}
+label{display:block;margin:12px 0 7px;font-size:14px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #34415d;border-radius:9px;background:#0b1426;color:white;font:inherit}
+textarea{min-height:95px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.row button{flex:1}
+#preview{width:100%;height:390px;background:white;border:0;border-radius:9px}
+#elements{display:grid;gap:8px}
+.element{padding:10px;background:#0b1426;border:1px solid #34415d;border-radius:9px}
+.element button{margin-left:8px;padding:7px}
+.hidden{display:none}
+hr{border:0;border-top:1px solid #293653;margin:18px 0}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand">App<span>Forge</span></div>
-  <p>Deine Projekte. Deine Ideen. Deine Apps.</p>
+  <div class="logo">App<span>Forge</span> Studio</div>
+  <p>Idee eingeben. App gestalten. Vorschau testen.</p>
 </header>
 <main>
-  <section class="panel">
-    <h2>Neues App-Projekt</h2>
-    <form id="projectForm">
-      <label for="name">Projektname</label>
-      <input id="name" maxlength="70" required placeholder="z. B. Meine Termin-App">
-      <label for="type">Projekttyp</label>
-      <select id="type">
-        <option>Web-App</option>
-        <option>Geschäftswebsite</option>
-        <option>Online-Shop</option>
-        <option>Terminplaner</option>
-        <option>KI-Projekt</option>
-        <option>Sonstige Idee</option>
-      </select>
-      <label for="description">Was soll deine App können?</label>
-      <textarea id="description" maxlength="2000" required placeholder="Beschreibe deine Idee und die wichtigsten Funktionen …"></textarea>
-      <button type="submit">＋ Projekt erstellen</button>
-    </form>
-    <p class="muted">Prototyp: Projekte werden lokal in diesem Browser gespeichert.</p>
-  </section>
+<nav>
+  <button onclick="show('generator')">App erstellen</button>
+  <button onclick="show('editor')">No-Code-Editor</button>
+  <button onclick="show('projects')">Meine Projekte</button>
+</nav>
 
-  <section class="panel">
-    <h2>Meine Projekte</h2>
-    <input id="search" placeholder="Projekte durchsuchen …" aria-label="Projekte durchsuchen">
-    <div id="projects"></div>
-  </section>
+<section id="generator" class="panel">
+  <h2>1. Erstelle eine App aus deiner Idee</h2>
+  <label for="idea">Was soll deine App machen?</label>
+  <textarea id="idea" placeholder="Beispiel: Erstelle einen Terminplaner mit Name, Datum und einem Button zum Anmelden."></textarea>
+  <label for="appname">Name der App</label>
+  <input id="appname" placeholder="Meine neue App">
+  <div class="row">
+    <button onclick="generate()">App-Entwurf erstellen</button>
+  </div>
+  <p class="muted">Die kostenlose Version nutzt lokale Vorlagen und Schlüsselwörter statt eines externen KI-Modells.</p>
+</section>
 
-  <section class="panel">
-    <h2>Web-App-Vorschau</h2>
-    <p class="muted">Erstelle eine einfache Beispiel-App zum Testen. Dies ist noch keine KI-Codegenerierung.</p>
-    <div class="actions">
-      <button id="makeDemo" type="button">Beispiel-App laden</button>
-      <button id="clearPreview" type="button" class="secondary">Vorschau leeren</button>
-    </div>
-    <div style="margin-top:14px">
-      <iframe id="preview" title="Vorschau der Beispiel-App" sandbox="allow-scripts"></iframe>
-    </div>
-  </section>
+<section id="editor" class="panel hidden">
+  <h2>2. Visueller No-Code-Editor</h2>
+  <label for="elementType">Welches Element möchtest du hinzufügen?</label>
+  <select id="elementType">
+    <option value="heading">Überschrift</option>
+    <option value="text">Textabsatz</option>
+    <option value="button">Button</option>
+    <option value="input">Eingabefeld</option>
+    <option value="card">Infokarte</option>
+  </select>
+  <label for="elementText">Text des Elements</label>
+  <input id="elementText" placeholder="Zum Beispiel: Jetzt anmelden">
+  <div class="row">
+    <button onclick="addElement()">Element hinzufügen</button>
+    <button class="secondary" onclick="clearElements()">Alles leeren</button>
+  </div>
+  <hr>
+  <h2>Elemente deiner App</h2>
+  <div id="elements"></div>
+</section>
+
+<section class="panel">
+  <h2>3. Live-Vorschau</h2>
+  <p class="muted">Teste hier deinen aktuellen App-Entwurf.</p>
+  <iframe id="preview" title="App-Vorschau" sandbox="allow-scripts"></iframe>
+  <div class="row">
+    <button onclick="refreshPreview()">Vorschau aktualisieren</button>
+    <button class="secondary" onclick="saveProject()">Projekt speichern</button>
+  </div>
+  <div class="row">
+    <button onclick="exportApp()">HTML-App exportieren</button>
+  </div>
+</section>
+
+<section id="projects" class="panel hidden">
+  <h2>Meine gespeicherten Projekte</h2>
+  <div id="projectList"></div>
+  <p class="muted">Die Speicherung erfolgt lokal in diesem Browser auf deinem Gerät.</p>
+</section>
 </main>
-<footer>AppForge · Version 1 · Erstellt für GitHub Pages</footer>
+
 <script>
-const STORAGE_KEY = "appforge_projects_v1";
+let elements = [];
 let projects = [];
+
 try {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  projects = saved ? JSON.parse(saved) : [];
+  projects = JSON.parse(localStorage.getItem("appforge_projects") || "[]");
   if (!Array.isArray(projects)) projects = [];
-} catch (e) { projects = []; }
+} catch(e) { projects = []; }
 
-const form = document.getElementById("projectForm");
-const list = document.getElementById("projects");
-const search = document.getElementById("search");
-
-function persist() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-    return true;
-  } catch (e) {
-    alert("Speichern nicht möglich. Prüfe den Speicher deines Browsers.");
-    return false;
-  }
+function show(id) {
+  ["generator","editor","projects"].forEach(x =>
+    document.getElementById(x).classList.toggle("hidden", x !== id)
+  );
+  if (id === "projects") renderProjects();
 }
 
-function render() {
-  list.replaceChildren();
-  const query = search.value.trim().toLowerCase();
-  const filtered = projects.filter(p =>
-    (p.name + " " + p.type + " " + p.description).toLowerCase().includes(query)
-  );
-  if (!filtered.length) {
-    const empty = document.createElement("p");
-    empty.className = "muted";
-    empty.textContent = projects.length ? "Keine passenden Projekte gefunden." : "Noch keine Projekte. Erstelle dein erstes Projekt oben.";
-    list.append(empty);
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function addElement(type, text) {
+  type = type || document.getElementById("elementType").value;
+  text = text === undefined ? document.getElementById("elementText").value.trim() : text;
+  if (!text) text = type === "heading" ? "Meine Überschrift" : "Mein Inhalt";
+  elements.push({type, text});
+  renderElements();
+  refreshPreview();
+  document.getElementById("elementText").value = "";
+}
+
+function clearElements() {
+  if (!confirm("Alle Elemente aus dem Entwurf entfernen?")) return;
+  elements = [];
+  renderElements();
+  refreshPreview();
+}
+
+function renderElements() {
+  const box = document.getElementById("elements");
+  box.replaceChildren();
+  elements.forEach((el, i) => {
+    const row = document.createElement("div");
+    row.className = "element";
+    const label = document.createElement("span");
+    label.textContent = el.type + ": " + el.text;
+    const del = document.createElement("button");
+    del.className = "secondary";
+    del.textContent = "Entfernen";
+    del.onclick = () => {
+      elements.splice(i, 1);
+      renderElements();
+      refreshPreview();
+    };
+    row.append(label, del);
+    box.append(row);
+  });
+}
+
+function generate() {
+  const idea = document.getElementById("idea").value.trim();
+  const name = document.getElementById("appname").value.trim() || "Meine App";
+  if (!idea) {
+    alert("Bitte beschreibe zuerst deine App-Idee.");
     return;
   }
-  filtered.forEach(p => {
-    const card = document.createElement("article");
-    card.className = "project";
-    const title = document.createElement("h3");
-    title.textContent = p.name;
-    const tag = document.createElement("span");
-    tag.className = "tag";
-    tag.textContent = p.type;
-    const desc = document.createElement("p");
-    desc.textContent = p.description;
-    const date = document.createElement("p");
-    date.className = "muted";
-    date.textContent = "Erstellt: " + p.created;
-    const actions = document.createElement("div");
-    actions.className = "actions";
-    const edit = document.createElement("button");
-    edit.className = "secondary";
-    edit.textContent = "Beschreibung bearbeiten";
-    edit.addEventListener("click", () => {
-      const next = prompt("Neue Beschreibung:", p.description);
-      if (next === null) return;
-      p.description = next.trim();
-      persist();
-      render();
-    });
-    const remove = document.createElement("button");
-    remove.className = "danger";
-    remove.textContent = "Löschen";
-    remove.addEventListener("click", () => {
-      if (!confirm("Projekt wirklich löschen?")) return;
-      projects = projects.filter(item => item.id !== p.id);
-      persist();
-      render();
-    });
-    actions.append(edit, remove);
-    card.append(title, tag, desc, date, actions);
-    list.append(card);
+  const q = idea.toLowerCase();
+  elements = [{type:"heading",text:name},{type:"text",text:idea}];
+
+  if (/termin|buchung|reservier/.test(q)) {
+    elements.push({type:"text",text:"Buche deinen Wunschtermin."});
+    elements.push({type:"input",text:"Dein Name"});
+    elements.push({type:"input",text:"Datum und Uhrzeit"});
+    elements.push({type:"button",text:"Termin anfragen"});
+  } else if (/shop|kauf|produkt|laden/.test(q)) {
+    elements.push({type:"card",text:"Produkt 1 – Beschreibung und Preis"});
+    elements.push({type:"card",text:"Produkt 2 – Beschreibung und Preis"});
+    elements.push({type:"button",text:"Zum Warenkorb"});
+  } else if (/taschenrechner|rechner|berechn/.test(q)) {
+    elements.push({type:"input",text:"Erste Zahl"});
+    elements.push({type:"input",text:"Zweite Zahl"});
+    elements.push({type:"button",text:"Berechnen"});
+  } else if (/kontakt|formular|anmeld/.test(q)) {
+    elements.push({type:"input",text:"Dein Name"});
+    elements.push({type:"input",text:"Deine E-Mail"});
+    elements.push({type:"button",text:"Absenden"});
+  } else {
+    elements.push({type:"card",text:"Funktion 1"});
+    elements.push({type:"card",text:"Funktion 2"});
+    elements.push({type:"button",text:"Los geht's"});
+  }
+  renderElements();
+  refreshPreview();
+  show("editor");
+}
+
+function buildHTML() {
+  const title = esc(document.getElementById("appname").value.trim() || "Meine App");
+  const content = elements.map(el => {
+    const t = esc(el.text);
+    if (el.type === "heading") return "<h1>" + t + "</h1>";
+    if (el.type === "text") return "<p>" + t + "</p>";
+    if (el.type === "button") return '<button type="button" onclick="this.textContent=\'Erledigt!\'">' + t + "</button>";
+    if (el.type === "input") return '<label style="display:block;margin:12px 0">' + t + '<br><input placeholder="' + t + '"></label>';
+    if (el.type === "card") return '<article class="card">' + t + "</article>";
+    return "";
+  }).join("\n");
+
+  return '<!DOCTYPE html><html lang="de"><meta charset="UTF-8">' +
+  '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+  '<title>' + title + '</title><style>' +
+  'body{font:16px Arial,sans-serif;max-width:650px;margin:30px auto;padding:20px;color:#182238;background:#f4f7fc}' +
+  'h1{color:#225ed3}button{padding:12px 18px;background:#225ed3;color:white;border:0;border-radius:8px;margin:6px 0}' +
+  'input{padding:10px;margin-top:6px;border:1px solid #ccd3df;border-radius:7px;max-width:100%}' +
+  '.card{padding:16px;margin:12px 0;border:1px solid #dce2ec;border-radius:12px;background:white}' +
+  '</style><main>' + content + '</main></html>';
+}
+
+function refreshPreview() {
+  document.getElementById("preview").srcdoc = buildHTML();
+}
+
+function saveProject() {
+  const name = document.getElementById("appname").value.trim() || "Meine App";
+  const idea = document.getElementById("idea").value.trim();
+  const project = {
+    name, idea,
+    elements: JSON.parse(JSON.stringify(elements)),
+    html: buildHTML(),
+    date: new Date().toLocaleDateString("de-DE")
+  };
+  projects.unshift(project);
+  try {
+    localStorage.setItem("appforge_projects", JSON.stringify(projects));
+    alert("Projekt wurde gespeichert.");
+    renderProjects();
+  } catch(e) {
+    projects.shift();
+    alert("Speichern fehlgeschlagen. Möglicherweise ist der Browserspeicher voll.");
+  }
+}
+
+function renderProjects() {
+  const box = document.getElementById("projectList");
+  box.replaceChildren();
+  if (!projects.length) {
+    box.textContent = "Noch keine Projekte gespeichert.";
+    return;
+  }
+  projects.forEach((p, i) => {
+    const row = document.createElement("div");
+    row.className = "element";
+    const title = document.createElement("strong");
+    title.textContent = p.name + " · " + (p.date || "");
+    const load = document.createElement("button");
+    load.textContent = "Öffnen";
+    load.onclick = () => {
+      document.getElementById("appname").value = p.name;
+      document.getElementById("idea").value = p.idea || "";
+      elements = Array.isArray(p.elements) ? JSON.parse(JSON.stringify(p.elements)) : [];
+      renderElements();
+      refreshPreview();
+      show("editor");
+    };
+    const del = document.createElement("button");
+    del.textContent = "Löschen";
+    del.className = "secondary";
+    del.onclick = () => {
+      if (!confirm("Dieses Projekt löschen?")) return;
+      projects.splice(i, 1);
+      try { localStorage.setItem("appforge_projects", JSON.stringify(projects)); }
+      catch(e) {}
+      renderProjects();
+    };
+    row.append(title, document.createElement("br"), load, del);
+    box.append(row);
   });
 }
 
-form.addEventListener("submit", event => {
-  event.preventDefault();
-  const name = document.getElementById("name").value.trim();
-  const type = document.getElementById("type").value;
-  const description = document.getElementById("description").value.trim();
-  if (!name || !description) return;
-  projects.unshift({
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-    name, type, description,
-    created: new Date().toLocaleDateString("de-DE")
-  });
-  if (persist()) {
-    form.reset();
-    render();
-    alert("Projekt wurde erstellt!");
-  } else {
-    projects.shift();
-  }
-});
+function exportApp() {
+  const blob = new Blob([buildHTML()], {type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = (document.getElementById("appname").value.trim() || "meine-app")
+    .replace(/[^a-z0-9_-]/gi,"-") + ".html";
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
 
-search.addEventListener("input", render);
-
-document.getElementById("makeDemo").addEventListener("click", () => {
-  const html = `<!DOCTYPE html><html lang="de"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="font-family:Arial,sans-serif;padding:24px;color:#172033"><h2>Meine erste Web-App</h2><p>Das ist eine interaktive Beispiel-App.</p><button id="btn">Klicke mich</button><p id="result"></p><script>document.getElementById('btn').addEventListener('click',()=>document.getElementById('result').textContent='Es funktioniert!');<\/script></body></html>`;
-  document.getElementById("preview").srcdoc = html;
-});
-
-document.getElementById("clearPreview").addEventListener("click", () => {
-  document.getElementById("preview").srcdoc = "";
-});
-
-render();
+renderElements();
+refreshPreview();
 </script>
 </body>
 </html>
