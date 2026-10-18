@@ -67,7 +67,8 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
   <section class="card"><h2 class="section-title">Systemstatus</h2>
    <div class="status-row"><div><b>Supabase</b><div class="small">Datenbank & geschützte Dashboard-API</div></div><span id="status-supabase" class="status-text"><i class="dot"></i>Wird geprüft</span></div>
    <div class="status-row"><div><b>Öffentliche Bybit-Marktdaten</b><div class="small">Kurskerzen aus gespeichertem Datenbestand</div></div><span id="status-market" class="status-text"><i class="dot"></i>Wird geprüft</span></div>
-   <div class="status-row"><div><b>Bybit-Demo-Konto-API</b><div class="small">Signierter, schreibgeschützter Kontotest</div></div><span class="status-text"><i class="dot"></i>Nicht über diese Ansicht ausgeführt</span></div>
+   <div class="status-row"><div><b>Bybit-Demo-Konto-API</b><div class="small">Schreibgeschützter Kontotest · keine Orders</div></div><div style="display:grid;gap:8px;justify-items:end"><span id="status-bybit-demo" class="status-text"><i class="dot"></i>Noch nicht getestet</span><button id="test-bybit" class="btn secondary" type="button">Demo-Verbindung prüfen</button></div></div>
+   <div id="bybit-test-message" aria-live="polite"></div>
    <div class="status-row"><div><b>Reale Orders</b><div class="small">Konfiguration aus dem Backend</div></div><span id="status-orders" class="status-text">—</span></div>
    <div class="status-row"><div><b>Auszahlungen</b><div class="small">Konfiguration aus dem Backend</div></div><span id="status-withdrawals" class="status-text">—</span></div>
    <h3 class="section-title" style="margin-top:20px">Simulationsauswertung</h3>
@@ -317,6 +318,37 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
     await showLogin();
   });
   $("refresh").addEventListener("click", loadDashboard);
+  $("test-bybit").addEventListener("click", async () => {
+    const button = $("test-bybit");
+    button.disabled = true;
+    button.textContent = "Prüfe Demo-Verbindung …";
+    message("bybit-test-message", "Prüfe den Bybit-Demo-Endpunkt read-only; es werden keine Orders gesendet.");
+    setStatus("status-bybit-demo", "Prüfung läuft");
+    try {
+      const { data, error } = await sb.functions.invoke("bybit-demo-connection-test", { body: {} });
+      if (error) {
+        const status = error.status || 0;
+        throw new Error(status === 401 ? "Bitte melde dich erneut am Dashboard an." : status === 403 ? "Dieses Supabase-Konto darf den Verbindungstest nicht ausführen." : "Bybit-Demo-Verbindungstest fehlgeschlagen. Prüfe die Backend-Diagnose.");
+      }
+      if (!data || data.ok !== true) {
+        const attempt = data?.diagnostic?.auth_attempts?.find(item => item.bybit_code != null);
+        const detail = attempt ? " Bybit-Code: " + attempt.bybit_code + (attempt.bybit_message ? " (" + attempt.bybit_message + ")" : "") : "";
+        throw new Error((data?.error || "Verbindungstest fehlgeschlagen.") + detail);
+      }
+      const account = (data.balances || [])[0] || {};
+      setStatus("status-bybit-demo", "Verbunden", "good");
+      message("bybit-test-message",
+        "Bybit Demo erfolgreich authentifiziert. Konto: " + (account.account_type || "Unified") +
+        "; Equity: " + (account.total_equity ?? "nicht geliefert") +
+        ". Keine Orders platziert, keine Auszahlungen versucht.", "success");
+    } catch (err) {
+      setStatus("status-bybit-demo", "Nicht verbunden", "bad");
+      message("bybit-test-message", err instanceof Error ? err.message : "Unbekannter Verbindungsfehler.", "error");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Demo-Verbindung prüfen";
+    }
+  });
   sb.auth.getSession().then(({ data, error }) => {
     if (error) message("auth-message","Sitzung konnte nicht geprüft werden.", "error");
     if (recoveryFlow) {
