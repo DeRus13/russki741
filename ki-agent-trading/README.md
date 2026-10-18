@@ -1,27 +1,39 @@
-# DeRus13 KI-Trading-Agent (Demo-Prototyp)
+# DeRus13 KI-Trading-Agent
 
-Ein einfacher, sicherer Startpunkt für den geplanten KI-Trading-Agenten. Dieses Projekt ist im **Simulationsmodus** und sendet keine Orders an Bybit.
+Responsive dashboard for the existing Supabase trading-agent backend. The initial mode is **simulation only**; this project does not place any real orders.
 
-## Aktueller Umfang
-- Responsive Dashboard für BTC, ETH und SOL
-- Interne, lokale Demo-Signale und simulierte Trades
-- Risikolimit als sichtbare Konfiguration: maximaler Drawdown 10 %
-- Statusanzeige für Bybit-Demo-API und Nachrichten-Feeds
-- Keine API-Schlüssel im Browser, keine echte Orderausführung
+## Dashboard
 
-## Start
-Öffne `index.html` in einem Browser oder veröffentliche den Ordner über eine geeignete GitHub-Pages-Konfiguration.
+- Frontend: `ki-agent-trading/index.html`
+- Protected read-only Edge Function: `agent-dashboard-summary`
+- Supabase project ref: `bajvhowasdmliztvguef`
+- Markets: BTCUSDT, ETHUSDT, SOLUSDT
+- Risk configuration is read from the backend; current configured maximum drawdown is 10%
+- Real orders and withdrawals remain disabled
 
-## Vor echtem Demo-Handel erforderlich
-1. Einen serverseitigen API-Proxy (z. B. Cloudflare Worker) verwenden.
-2. Bybit-Demo-Schlüssel ausschließlich als Worker-Secrets speichern.
-3. API-Verbindung, Signaturen, Zeitstempel und Fehlermeldungen testen.
-4. Serverseitige Positionsgrößen, Stop-Loss und Drawdown-Grenzen erzwingen.
-5. Erst nach verifizierten Tests Demo-Orders aktivieren.
+## Authentication and access
 
-## Geplante Integrationen
-- Bybit Demo API (noch nicht verbunden)
-- Nachrichten-/Makroanalyse (noch nicht verbunden)
-- Supabase für persistente Einstellungen und Protokolle (noch nicht verbunden)
+The browser uses only the public Supabase publishable key. It never contains the service-role key or Bybit API secret.
 
-**Wichtig:** Die Marktwerte und Signale im Prototyp sind synthetische Beispieldaten, keine Live-Kurse und keine Anlageempfehlung.
+Sign in with the existing Supabase Auth account that is allow-listed in `ai_agents.dashboard_access`. The Edge Function checks the user session and allow-list before returning summarized data. Do not add broad public read policies to the `ai_agents` schema.
+
+## Publish with GitHub Pages
+
+In the GitHub repository settings, open **Pages** and select **Deploy from a branch**, branch `main`, folder `/(root)`. After GitHub Pages finishes publishing, open:
+
+`https://derus13.github.io/russki741/ki-agent-trading/`
+
+If GitHub Pages has not been enabled yet, the page will not be available at that URL until the repository owner enables it.
+
+## Connected backend data
+
+The dashboard reads agent registry status, current risk settings, recent signals, market candles, news entries, recent run status and a sampled simulation summary through the protected Edge Function. The page does not start a scan or execute trades.
+
+## Safety notes
+
+- Dashboard mode is read-only.
+- Current backend configuration is `simulation_only`.
+- `real_orders_enabled` is false and `withdrawals_enabled` is false.
+- Stored signals are experimental rule-based research results, not validated investment advice.
+- Bybit Demo-account authentication is not claimed as connected just because public market candles are available.
+- Keep every Bybit API key/secret exclusively in server-side function/Worker secrets. Never commit them to this repository.
