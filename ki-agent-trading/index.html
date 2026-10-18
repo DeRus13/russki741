@@ -2,50 +2,234 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
 <title>DeRus13 · KI Trading Agent</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#121a2e;--line:#26324b;--text:#eef3ff;--muted:#94a3bd;--green:#55e6a5;--blue:#7ca7ff;--amber:#ffd479}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#1a2a4b 0,transparent 38%),var(--bg);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
-main{max-width:1120px;margin:auto;padding:28px 18px 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#6d8cff,#55e6a5);color:#081020;font-weight:900;font-size:19px}.eyebrow{color:var(--green);text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:800}.title{font-size:25px;font-weight:800;letter-spacing:-.03em}.sub{color:var(--muted);font-size:13px}.pill{border:1px solid #3a4b68;background:#15223a;border-radius:999px;padding:8px 12px;color:var(--amber);font-size:12px;font-weight:700}.hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:22px;flex-wrap:wrap}.hero h1{font-size:clamp(27px,4vw,40px);letter-spacing:-.045em;line-height:1.1;margin:8px 0 10px}.hero p{color:var(--muted);max-width:650px;margin:0}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}.card{background:linear-gradient(180deg,#151f35,#11182a);border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0}.metric-label{font-size:12px;color:var(--muted)}.metric{font-size:25px;font-weight:800;margin:8px 0 3px;letter-spacing:-.03em}.positive{color:var(--green)}.neutral{color:var(--blue)}.section-title{font-size:17px;font-weight:750;margin:0 0 14px}.layout{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}.asset{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.asset:last-child{border-bottom:0}.coin{display:flex;gap:10px;align-items:center}.coin-icon{width:34px;height:34px;border-radius:11px;background:#202d48;display:grid;place-items:center;font-weight:800}.small{font-size:12px;color:var(--muted)}.status-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.status-row:last-child{border-bottom:0}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:7px}.btn{border:1px solid #405272;background:#1a2945;color:var(--text);border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}.btn:hover{border-color:var(--blue)}.btn.primary{background:var(--green);border-color:var(--green);color:#07121b}.notice{margin-top:14px;border:1px solid #6d5730;background:#2a2418;color:#f6dca1;padding:13px 15px;border-radius:14px;font-size:12px}.feed{display:flex;gap:12px;align-items:flex-start;padding:12px 0}.feed-icon{flex:none;width:30px;height:30px;border-radius:10px;background:#202d48;display:grid;place-items:center;color:var(--blue)}footer{color:var(--muted);font-size:12px;margin-top:22px;text-align:center}
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}}@media(max-width:430px){main{padding:20px 12px}.grid{gap:9px}.card{padding:14px}.metric{font-size:21px}.asset{gap:8px}}
+:root{color-scheme:dark;--bg:#09101e;--panel:#111a2d;--panel2:#15213a;--line:#273651;--text:#eff4ff;--muted:#96a6c2;--green:#54e5a1;--blue:#87aaff;--amber:#ffd27a;--red:#ff8585}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 12% 0%,#1b2b4d 0,transparent 40%),var(--bg);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
+main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}.brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#87aaff,#54e5a1);color:#07101d;font-weight:950}.title{font-size:24px;font-weight:850;letter-spacing:-.035em}.sub,.small{color:var(--muted);font-size:12px}.pill{border:1px solid #3a4b68;background:#15223a;border-radius:999px;padding:7px 11px;color:var(--amber);font-size:11px;font-weight:800;letter-spacing:.05em}.hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap}.eyebrow{color:var(--green);text-transform:uppercase;letter-spacing:.15em;font-size:11px;font-weight:850}.hero h1{font-size:clamp(29px,4.5vw,42px);letter-spacing:-.055em;line-height:1.08;margin:9px 0 10px}.hero p{color:var(--muted);max-width:700px;margin:0}.btn{border:1px solid #405272;background:#1a2945;color:var(--text);border-radius:12px;padding:10px 14px;font:inherit;font-weight:750;cursor:pointer}.btn:hover{border-color:var(--blue)}.btn:disabled{opacity:.55;cursor:wait}.btn.primary{background:var(--green);border-color:var(--green);color:#06121b}.btn.secondary{background:transparent}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:18px 0}.card{background:linear-gradient(180deg,#141f35,#101728);border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0}.metric-label{font-size:12px;color:var(--muted)}.metric{font-size:25px;font-weight:850;margin:7px 0 3px;letter-spacing:-.035em;overflow-wrap:anywhere}.positive{color:var(--green)}.neutral{color:var(--blue)}.warning{color:var(--amber)}.negative{color:var(--red)}.section-title{font-size:17px;font-weight:800;margin:0 0 10px}.layout{display:grid;grid-template-columns:1.22fr 1fr;gap:14px}.full{margin-top:14px}.table-wrap{width:100%;overflow:auto}table{border-collapse:collapse;width:100%;min-width:500px;font-size:13px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:11px 9px;vertical-align:top}th{color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:750}tr:last-child td{border-bottom:0}.asset{display:grid;grid-template-columns:1.1fr auto auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.asset:last-child{border-bottom:0}.coin{display:flex;gap:10px;align-items:center}.coin-icon{width:34px;height:34px;border-radius:11px;background:#202d48;display:grid;place-items:center;font-weight:850}.status-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.status-row:last-child{border-bottom:0}.status-text{font-size:12px;text-align:right}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:7px}.dot.green{background:var(--green)}.dot.red{background:var(--red)}.tag{display:inline-block;border:1px solid #364864;background:#182740;border-radius:7px;padding:3px 7px;font-size:11px;white-space:nowrap}.notice{margin-top:14px;border:1px solid #6d5730;background:#2a2418;color:#f6dca1;padding:12px 14px;border-radius:14px;font-size:12px}.feed{padding:12px 0;border-bottom:1px solid var(--line)}.feed:last-child{border-bottom:0}.feed-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.feed a{color:var(--blue);text-decoration:none}.feed a:hover{text-decoration:underline}.muted{color:var(--muted)}.error{border:1px solid #703f49;background:#291923;color:#ffbdc5;border-radius:12px;padding:11px 13px;margin:12px 0;font-size:13px}.success{border:1px solid #2d6e56;background:#12291f;color:#a9f6d0;border-radius:12px;padding:11px 13px;margin:12px 0;font-size:13px}.login-shell{max-width:500px;margin:34px auto 0}.login-shell .card{padding:24px}.field{display:grid;gap:6px;margin:14px 0}.field label{font-size:12px;color:var(--muted);font-weight:750}.field input{width:100%;padding:12px 13px;border:1px solid #3a4a65;border-radius:12px;background:#0b1425;color:var(--text);font:inherit}.field input:focus{outline:2px solid #567ac7;outline-offset:1px}.auth-note{font-size:12px;color:var(--muted);margin-top:13px}.hidden{display:none!important}.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.right{margin-left:auto}.foot{color:var(--muted);font-size:12px;margin-top:24px;text-align:center}.userline{color:var(--muted);font-size:12px;margin-right:5px}.empty{color:var(--muted);font-size:13px;padding:18px 0}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}}@media(max-width:480px){main{padding:18px 11px}.grid{gap:8px}.card{padding:14px}.metric{font-size:22px}.hero h1{font-size:30px}.asset{gap:7px;grid-template-columns:1fr auto}.asset .signal-change{grid-column:2}.top-actions{width:100%}.top-actions .btn{flex:1}}
 </style>
 </head>
-<body><main>
+<body>
+<main>
 <header class="top">
- <div class="brand"><div class="logo">D13</div><div><div class="title">DeRus13 <span style="color:var(--blue)">Agent</span></div><div class="sub">KI Trading · Kontrollzentrum</div></div></div>
- <div class="pill">● SIMULATIONSMODUS</div>
+  <div class="brand"><div class="logo">D13</div><div><div class="title">DeRus13 <span style="color:var(--blue)">Agent</span></div><div class="sub">KI Trading · Kontrollzentrum</div></div></div>
+  <div class="top-actions"><span id="mode-pill" class="pill">GESICHERTER MODUS</span><span id="userline" class="userline hidden"></span><button id="signout" class="btn secondary hidden" type="button">Abmelden</button></div>
 </header>
-<section class="hero">
- <div><div class="eyebrow">Trading Intelligence / V0.1</div><h1>Dein Trading-Agent.<br><span style="color:var(--green)">Sicher starten.</span></h1><p>Ein zentraler Ausgangspunkt für Marktanalyse, Risikoüberwachung und spätere Bybit-Demo-Anbindung. Aktuell werden ausschließlich Beispieldaten angezeigt.</p></div>
- <button class="btn primary" id="refresh">Demo aktualisieren ↻</button>
+
+<section id="login-shell" class="login-shell">
+ <div class="card">
+  <div class="eyebrow">Privater Zugang</div>
+  <h1 style="font-size:28px;letter-spacing:-.04em;margin:8px 0">Beim Trading-Agent anmelden</h1>
+  <p class="muted" style="font-size:13px;margin:0 0 18px">Das Dashboard liest die bestehenden Agenten-, Risiko-, Signal- und Nachrichtendaten über eine geschützte Supabase-Funktion. Nur freigeschaltete Konten erhalten Zugriff.</p>
+  <form id="login-form">
+   <div class="field"><label for="email">Supabase-Konto · E-Mail</label><input id="email" name="email" type="email" autocomplete="username" required></div>
+   <div class="field"><label for="password">Passwort</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
+   <button id="login-button" class="btn primary" type="submit" style="width:100%">Sicher anmelden</button>
+  </form>
+  <div id="auth-message" aria-live="polite"></div>
+  <p class="auth-note">Benutze das bereits vorhandene Supabase-Auth-Konto dieses Projekts. Passwörter und Tokens werden nicht an ChatGPT gesendet. API-Schlüssel mit erhöhten Rechten sind nicht im Browser hinterlegt.</p>
+ </div>
 </section>
-<section class="grid">
- <div class="card"><div class="metric-label">Agentenstatus</div><div class="metric positive">Bereit</div><div class="small">Lokaler UI-Prototyp</div></div>
- <div class="card"><div class="metric-label">Demo-Kapital</div><div class="metric">$10,000</div><div class="small">Fiktiver Startwert</div></div>
- <div class="card"><div class="metric-label">Drawdown-Limit</div><div class="metric">10%</div><div class="small">Zielvorgabe · noch nicht erzwungen</div></div>
- <div class="card"><div class="metric-label">Live-Verbindungen</div><div class="metric neutral">0 / 3</div><div class="small">Noch nicht verbunden</div></div>
+
+<section id="dashboard" class="hidden">
+ <section class="hero">
+  <div><div class="eyebrow">Trading Intelligence / V0.2</div><h1>Marktdaten, Signale<br><span style="color:var(--green)">und Risiko auf einen Blick.</span></h1><p>Verwendet die bestehende Agenten-Datenbank. Die Anzeige aktualisiert nur die Ansicht; sie startet keine Orders.</p></div>
+  <button class="btn primary" id="refresh" type="button">Dashboard aktualisieren ↻</button>
+ </section>
+ <div id="dashboard-message" aria-live="polite"></div>
+ <section class="grid">
+  <div class="card"><div class="metric-label">Aktive Agenten</div><div id="metric-agents" class="metric">—</div><div id="metric-agents-note" class="small">Lade Status …</div></div>
+  <div class="card"><div class="metric-label">Virtuelles Startkapital</div><div id="metric-balance" class="metric">—</div><div class="small">Simulation, kein echtes Guthaben</div></div>
+  <div class="card"><div class="metric-label">Max. Drawdown-Limit</div><div id="metric-drawdown" class="metric">—</div><div class="small">Serverseitige Konfiguration</div></div>
+  <div class="card"><div class="metric-label">Letzter Agentenlauf</div><div id="metric-run" class="metric" style="font-size:20px">—</div><div id="metric-run-note" class="small">Lade Status …</div></div>
+ </section>
+ <div class="layout">
+  <section class="card"><h2 class="section-title">Letzte Marktsignale</h2><div class="small">Regelbasierte Forschungssignale · keine validierten Kauf-/Verkaufsempfehlungen</div>
+   <div id="signals"><div class="empty">Lade Signale …</div></div>
+   <div class="notice">Modus: Simulation. Diese Oberfläche führt keine Orders aus. Die Signale sind experimentell und können falsch sein.</div>
+  </section>
+  <section class="card"><h2 class="section-title">Systemstatus</h2>
+   <div class="status-row"><div><b>Supabase</b><div class="small">Datenbank & geschützte Dashboard-API</div></div><span id="status-supabase" class="status-text"><i class="dot"></i>Wird geprüft</span></div>
+   <div class="status-row"><div><b>Öffentliche Bybit-Marktdaten</b><div class="small">Kurskerzen aus gespeichertem Datenbestand</div></div><span id="status-market" class="status-text"><i class="dot"></i>Wird geprüft</span></div>
+   <div class="status-row"><div><b>Bybit-Demo-Konto-API</b><div class="small">Signierter, schreibgeschützter Kontotest</div></div><span class="status-text"><i class="dot"></i>Nicht über diese Ansicht ausgeführt</span></div>
+   <div class="status-row"><div><b>Reale Orders</b><div class="small">Konfiguration aus dem Backend</div></div><span id="status-orders" class="status-text">—</span></div>
+   <div class="status-row"><div><b>Auszahlungen</b><div class="small">Konfiguration aus dem Backend</div></div><span id="status-withdrawals" class="status-text">—</span></div>
+   <h3 class="section-title" style="margin-top:20px">Simulationsauswertung</h3>
+   <div class="status-row"><div><b>Geschlossene Trades</b><div class="small">Auswertung der verfügbaren letzten 250 Trades</div></div><b id="sim-trades">—</b></div>
+   <div class="status-row"><div><b>Netto-PnL der Stichprobe</b><div class="small">Realisierter PnL abzüglich erfasster Gebühren</div></div><b id="sim-pnl">—</b></div>
+   <div class="status-row"><div><b>Trefferquote</b><div class="small">Nur falls geschlossene Trades vorhanden sind</div></div><b id="sim-winrate">—</b></div>
+  </section>
+ </div>
+ <section class="card full"><h2 class="section-title">Nachrichten · Makro · Geopolitik</h2><div class="small">Neueste gespeicherte Einträge aus den angebundenen RSS-Feeds</div><div id="news"><div class="empty">Lade Nachrichten …</div></div></section>
+ <section class="card full"><h2 class="section-title">Letzte Agentenläufe</h2><div class="table-wrap"><table><thead><tr><th>Agentenlauf</th><th>Status</th><th>Gestartet</th><th>Beendet</th></tr></thead><tbody id="runs"><tr><td colspan="4" class="empty">Lade Ausführungen …</td></tr></tbody></table></div></section>
+ <p class="small" id="updated-at" style="text-align:right;margin-top:10px">Noch nicht aktualisiert</p>
 </section>
-<div class="layout">
- <section class="card"><h2 class="section-title">Marktübersicht</h2><div class="small">Synthetische Beispielwerte · keine Live-Kurse</div>
-  <div class="asset"><div class="coin"><div class="coin-icon">₿</div><div><b>Bitcoin</b><div class="small">BTC / USDT</div></div></div><b id="btc">$67,420</b><span class="positive">+1.24%</span></div>
-  <div class="asset"><div class="coin"><div class="coin-icon">Ξ</div><div><b>Ethereum</b><div class="small">ETH / USDT</div></div></div><b id="eth">$3,480</b><span class="positive">+0.68%</span></div>
-  <div class="asset"><div class="coin"><div class="coin-icon">S</div><div><b>Solana</b><div class="small">SOL / USDT</div></div></div><b id="sol">$154.20</b><span style="color:var(--amber)">−0.31%</span></div>
-  <div class="notice">Diese Kurse sind nur Platzhalter. Keine Kauf- oder Verkaufssignale werden an eine Börse gesendet.</div>
- </section>
- <section class="card"><h2 class="section-title">Verbindungen</h2>
-  <div class="status-row"><div><b>Bybit Demo API</b><div class="small">Marktdaten / Demo-Orders</div></div><span class="small"><i class="dot"></i>Nicht verbunden</span></div>
-  <div class="status-row"><div><b>Supabase</b><div class="small">Einstellungen / Protokolle</div></div><span class="small"><i class="dot"></i>Nicht verbunden</span></div>
-  <div class="status-row"><div><b>Nachrichtenanalyse</b><div class="small">Makro / Geopolitik</div></div><span class="small"><i class="dot"></i>Nicht verbunden</span></div>
-  <h3 class="section-title" style="margin-top:20px">Nächste Schritte</h3>
-  <div class="feed"><div class="feed-icon">1</div><div><b>API sicher anbinden</b><div class="small">Nur serverseitig über Worker-Secrets.</div></div></div>
-  <div class="feed"><div class="feed-icon">2</div><div><b>Live-Daten validieren</b><div class="small">Kurse, Zeitstempel und Fehler prüfen.</div></div></div>
-  <div class="feed"><div class="feed-icon">3</div><div><b>Demo-Risikolimits testen</b><div class="small">Noch keine echten Orders aktivieren.</div></div></div>
- </section>
-</div>
-<footer>DeRus13 KI Agent · Prototyp · Keine Anlageberatung · Keine echten Orders</footer>
+
+<footer class="foot">DeRus13 KI Agent · Privates Dashboard · Simulation zuerst · Keine Anlageberatung · Keine echten Orders</footer>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script>
-document.getElementById('refresh').addEventListener('click',()=>{document.getElementById('refresh').textContent='Demo aktualisiert ✓';setTimeout(()=>document.getElementById('refresh').textContent='Demo aktualisieren ↻',1600);});
-</script></body></html>
+(() => {
+  const SUPABASE_URL = "https://bajvhowasdmliztvguef.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_36q39zpw6pnh8GAa2tJ04A_REFWlwct";
+  const { createClient } = window.supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  });
+  const $ = id => document.getElementById(id);
+  const show = (id, yes) => $(id).classList.toggle("hidden", !yes);
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[char]));
+  const fmtDate = value => {
+    if (!value) return "—";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("de-DE",{dateStyle:"medium",timeStyle:"short"});
+  };
+  const age = value => {
+    if (!value) return "Keine Daten";
+    const ms = Date.now() - new Date(value).getTime();
+    if (!Number.isFinite(ms) || ms < 0) return fmtDate(value);
+    const mins = Math.floor(ms/60000);
+    if (mins < 1) return "gerade eben";
+    if (mins < 60) return "vor " + mins + " Min.";
+    const hours = Math.floor(mins/60);
+    if (hours < 24) return "vor " + hours + " Std.";
+    return "vor " + Math.floor(hours/24) + " Tagen";
+  };
+  const number = (value, digits=2) => {
+    const n = Number(value);
+    return Number.isFinite(n) ? n.toLocaleString("de-DE",{minimumFractionDigits:digits,maximumFractionDigits:digits}) : "—";
+  };
+  const money = (value, currency="USDT") => value == null ? "—" : number(value,2) + " " + currency;
+  const message = (id, text, kind="") => {
+    $(id).className = kind ? kind : "";
+    $(id).textContent = text || "";
+  };
+  const setStatus = (id, text, state="neutral") => {
+    const cls = state === "good" ? "green" : state === "bad" ? "red" : "";
+    $(id).innerHTML = '<i class="dot '+cls+'"></i>' + escapeHtml(text);
+  };
+  const actionBadge = action => {
+    const color = action === "buy" ? "positive" : action === "sell" ? "negative" : "warning";
+    const label = action === "buy" ? "BUY · Simulation" : action === "sell" ? "SELL · Simulation" : "HOLD";
+    return '<span class="tag '+color+'">'+label+'</span>';
+  };
+  const renderSignals = data => {
+    if (!data.length) { $("signals").innerHTML = '<div class="empty">Noch keine Signale vorhanden.</div>'; return; }
+    $("signals").innerHTML = data.map(signal => {
+      const conf = Math.round(Number(signal.confidence || 0)*100);
+      const flags = Array.isArray(signal.risk_flags) ? signal.risk_flags : [];
+      return '<div class="asset"><div class="coin"><div class="coin-icon">'+escapeHtml(signal.market.replace("USDT",""))+'</div><div><b>'+escapeHtml(signal.market)+'</b><div class="small">'+escapeHtml(signal.timeframe)+' · '+escapeHtml(age(signal.created_at))+'</div></div></div><div>'+actionBadge(signal.action)+'<div class="small" style="margin-top:5px">Confidence '+conf+'%</div></div><span class="small signal-change">'+escapeHtml(signal.execution_mode || "simulation_only")+'</span><div class="small" style="grid-column:1/-1;line-height:1.45">'+escapeHtml(signal.rationale || "Keine Begründung gespeichert.")+' '+(flags.length ? '<br><span class="muted">Risiko: '+escapeHtml(flags.join(", "))+'</span>' : '')+'</div></div>';
+    }).join("");
+  };
+  const renderNews = data => {
+    if (!data.length) { $("news").innerHTML = '<div class="empty">Noch keine gespeicherten Nachrichten.</div>'; return; }
+    $("news").innerHTML = data.map(item => {
+      const title = escapeHtml(item.title || "Ohne Titel");
+      const source = escapeHtml(item.source || "Quelle unbekannt");
+      const summary = escapeHtml(item.summary || "");
+      const link = item.url && /^https?:\/\//i.test(item.url) ? '<a href="'+escapeHtml(item.url)+'" target="_blank" rel="noopener noreferrer">Quelle öffnen ↗</a>' : "";
+      const topics = Array.isArray(item.topics) ? item.topics.slice(0,5).map(escapeHtml).join(" · ") : "";
+      return '<article class="feed"><div class="feed-head"><div><b>'+title+'</b><div class="small">'+source+' · '+escapeHtml(fmtDate(item.published_at))+'</div></div><div class="small">'+(item.market_impact_score == null ? "" : "Impact "+Math.round(Number(item.market_impact_score)*100)+"%")+'</div></div>'+(summary ? '<p class="muted" style="font-size:13px;margin:7px 0">'+summary+'</p>' : '')+'<div class="feed-head"><span class="small">'+topics+'</span>'+link+'</div></article>';
+    }).join("");
+  };
+  const renderRuns = data => {
+    if (!data.length) { $("runs").innerHTML = '<tr><td colspan="4" class="empty">Noch keine Ausführungen gespeichert.</td></tr>'; return; }
+    $("runs").innerHTML = data.map(run => '<tr><td>'+escapeHtml(run.run_type || "Agentenlauf")+'</td><td><span class="tag '+(run.status==="succeeded"?"positive":run.status==="failed"?"negative":"warning")+'">'+escapeHtml(run.status)+'</span></td><td>'+escapeHtml(fmtDate(run.created_at))+'</td><td>'+escapeHtml(fmtDate(run.finished_at))+'</td></tr>').join("");
+  };
+  async function loadDashboard() {
+    $("refresh").disabled = true;
+    $("refresh").textContent = "Aktualisiere …";
+    message("dashboard-message","Lade gesicherte Backend-Daten …");
+    try {
+      const { data, error } = await sb.functions.invoke("agent-dashboard-summary", { body: {} });
+      if (error) {
+        const status = error.status || 0;
+        throw new Error(status === 401 ? "Sitzung abgelaufen. Bitte erneut anmelden." : status === 403 ? "Dieses Supabase-Konto ist nicht für das Dashboard freigeschaltet." : "Dashboard konnte nicht geladen werden. Prüfe die Funktion agent-dashboard-summary.");
+      }
+      if (!data || data.ok !== true) throw new Error(data?.error || "Ungültige Antwort vom Dashboard-Backend.");
+      const agents = Array.isArray(data.agents) ? data.agents : [];
+      const active = agents.filter(agent => agent.enabled).length;
+      const risk = data.risk || {};
+      $("metric-agents").textContent = active + " / " + agents.length;
+      $("metric-agents-note").textContent = agents.filter(a => a.execution_mode === "simulation_only").length + " im Simulationsmodus";
+      $("metric-balance").textContent = money(risk.starting_virtual_balance, "USDT");
+      $("metric-drawdown").textContent = risk.max_drawdown_percent == null ? "—" : number(risk.max_drawdown_percent,0) + "%";
+      const lastRun = (data.recent_runs || [])[0];
+      $("metric-run").textContent = lastRun ? String(lastRun.status || "—").toUpperCase() : "—";
+      $("metric-run-note").textContent = lastRun ? age(lastRun.created_at) : "Noch kein Lauf";
+      $("status-supabase").innerHTML = '<i class="dot green"></i>Verbunden';
+      setStatus("status-market", (data.latest_candles || []).length ? "Daten gespeichert" : "Keine Kerzen", (data.latest_candles || []).length ? "good" : "neutral");
+      $("status-orders").innerHTML = risk.real_orders_enabled ? '<span class="negative">Aktiviert</span>' : '<span class="positive">Deaktiviert</span>';
+      $("status-withdrawals").innerHTML = risk.withdrawals_enabled ? '<span class="negative">Aktiviert</span>' : '<span class="positive">Deaktiviert</span>';
+      const sim = data.simulation || {};
+      $("sim-trades").textContent = String(sim.closed_trades_sampled ?? 0);
+      $("sim-pnl").textContent = money(sim.net_pnl_sampled, "USDT");
+      $("sim-pnl").className = Number(sim.net_pnl_sampled || 0) > 0 ? "positive" : Number(sim.net_pnl_sampled || 0) < 0 ? "negative" : "";
+      $("sim-winrate").textContent = sim.win_rate_sampled == null ? "—" : number(Number(sim.win_rate_sampled)*100,1) + "%";
+      renderSignals(data.latest_signals || []);
+      renderNews(data.recent_news || []);
+      renderRuns(data.recent_runs || []);
+      $("updated-at").textContent = "Dashboard aktualisiert: " + fmtDate(data.generated_at) + " · Signale: " + age(data.freshness?.latest_signal_at) + " · Nachrichten: " + age(data.freshness?.latest_news_at);
+      $("mode-pill").textContent = risk.real_orders_enabled ? "ORDERS AKTIVIERT" : "SIMULATION · REALORDERS AUS";
+      message("dashboard-message","Backend-Daten erfolgreich geladen.", "success");
+    } catch (err) {
+      setStatus("status-supabase", "Nicht verfügbar", "bad");
+      message("dashboard-message", err instanceof Error ? err.message : "Unbekannter Fehler.", "error");
+    } finally {
+      $("refresh").disabled = false;
+      $("refresh").textContent = "Dashboard aktualisieren ↻";
+    }
+  }
+  async function showDashboard(session) {
+    show("login-shell", false);
+    show("dashboard", true);
+    show("signout", true);
+    show("userline", true);
+    $("userline").textContent = session?.user?.email || "Angemeldet";
+    await loadDashboard();
+  }
+  async function showLogin() {
+    show("login-shell", true);
+    show("dashboard", false);
+    show("signout", false);
+    show("userline", false);
+  }
+  $("login-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    const button = $("login-button");
+    button.disabled = true;
+    button.textContent = "Melde an …";
+    message("auth-message","");
+    try {
+      const email = $("email").value.trim();
+      const password = $("password").value;
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      if (!data.session) throw new Error("Keine Sitzung erhalten. Prüfe dein Supabase-Konto.");
+      await showDashboard(data.session);
+    } catch (err) {
+      message("auth-message", err instanceof Error ? err.message : "Anmeldung fehlgeschlagen.", "error");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Sicher anmelden";
+    }
+  });
+  $("signout").addEventListener("click", async () => {
+    await sb.auth.signOut();
+    await showLogin();
+  });
+  $("refresh").addEventListener("click", loadDashboard);
+  sb.auth.getSession().then(({ data, error }) => {
+    if (error) message("auth-message","Sitzung konnte nicht geprüft werden.", "error");
+    if (data?.session) showDashboard(data.session); else showLogin();
+  });
+})();
+</script>
+</body>
+</html>
