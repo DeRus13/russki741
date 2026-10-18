@@ -328,7 +328,30 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
       const { data, error } = await sb.functions.invoke("bybit-demo-connection-test", { body: {} });
       if (error) {
         const status = error.status || 0;
-        throw new Error(status === 401 ? "Bitte melde dich erneut am Dashboard an." : status === 403 ? "Dieses Supabase-Konto darf den Verbindungstest nicht ausführen." : "Bybit-Demo-Verbindungstest fehlgeschlagen. Prüfe die Backend-Diagnose.");
+        let backend = null;
+        try {
+          const context = error.context;
+          if (context && typeof context.clone === "function") backend = await context.clone().json();
+          else if (context && typeof context.json === "function") backend = await context.json();
+        } catch (_) {}
+        if (status === 401) throw new Error("Deine Dashboard-Sitzung ist abgelaufen. Bitte melde dich erneut an.");
+        if (status === 403) throw new Error("Dieses Supabase-Konto darf den Verbindungstest nicht ausführen.");
+        if (backend) {
+          const diagnostic = backend.diagnostic || {};
+          const attempts = Array.isArray(diagnostic.auth_attempts) ? diagnostic.auth_attempts : [];
+          const attemptText = attempts.map(item =>
+            (item.mode || "Auth") + ": HTTP " + (item.http_status ?? "?") +
+            (item.bybit_code != null ? ", Code " + item.bybit_code : "") +
+            (item.bybit_message ? " (" + item.bybit_message + ")" : "") +
+            (item.body_empty ? " — leere Antwort" : "")
+          ).join(" | ");
+          const publicText = diagnostic.public_endpoint_http_status != null
+            ? "Öffentlicher Demo-Endpunkt: HTTP " + diagnostic.public_endpoint_http_status + ", Bybit-Code " + (diagnostic.public_endpoint_bybit_code ?? "?") + ". "
+            : "";
+          const next = backend.next_check ? " Nächste Prüfung: " + backend.next_check : "";
+          throw new Error((backend.error || "Bybit-Demo-Verbindungstest fehlgeschlagen.") + " " + publicText + (attemptText ? "Authentifizierung: " + attemptText + "." : "") + next);
+        }
+        throw new Error("Bybit-Demo-Verbindung fehlgeschlagen (HTTP " + status + "). Die Funktion lieferte keine lesbare Diagnose.");
       }
       if (!data || data.ok !== true) {
         const attempt = data?.diagnostic?.auth_attempts?.find(item => item.bybit_code != null);
