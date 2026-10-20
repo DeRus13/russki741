@@ -355,8 +355,28 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
           const publicText = diagnostic.public_endpoint_http_status != null
             ? "Öffentlicher Demo-Endpunkt: HTTP " + diagnostic.public_endpoint_http_status + ", Bybit-Code " + (diagnostic.public_endpoint_bybit_code ?? "?") + ". "
             : "";
+          const key = diagnostic.key_info || {};
+          const keyText = key.authenticated
+            ? " Schlüsselprüfung: authentifiziert; read-only=" + (key.read_only ?? "?") +
+              "; Typ=" + (key.key_type || "?") +
+              "; ContractTrade=" + (Array.isArray(key.contract_trade_permissions) ? key.contract_trade_permissions.join(",") : "?") +
+              "; IP-Beschränkung=" + (key.ip_restriction_enabled == null ? "?" : key.ip_restriction_enabled ? "aktiv (" + (key.ip_restriction_count ?? "?") + ")" : "aus") + "."
+            : "";
+          const pos = diagnostic.position_query || {};
+          const posText = pos.http_status != null
+            ? " Positionsabfrage: HTTP " + pos.http_status +
+              (pos.bybit_code != null ? ", Bybit-Code " + pos.bybit_code : "") +
+              (pos.bybit_message ? " (" + pos.bybit_message + ")" : "") +
+              (pos.body_empty ? " — leere Antwort" : "") +
+              (pos.response_headers?.server ? ", Server " + pos.response_headers.server : "") +
+              (pos.response_headers?.cf_ray ? ", CF-Ray " + pos.response_headers.cf_ray : "") + "."
+            : "";
+          const clockText = diagnostic.estimated_server_clock_offset_ms != null
+            ? " Serverzeit-Abweichung: " + diagnostic.estimated_server_clock_offset_ms + " ms."
+            : "";
           const next = backend.next_check ? " Nächste Prüfung: " + backend.next_check : "";
-          throw new Error((backend.error || "Bybit-Demo-Verbindungstest fehlgeschlagen.") + " " + publicText + (attemptText ? "Authentifizierung: " + attemptText + "." : "") + next);
+          throw new Error((backend.error || "Bybit-Demo-Verbindungstest fehlgeschlagen.") + " " + publicText +
+            (attemptText ? " Authentifizierung: " + attemptText + "." : "") + keyText + posText + clockText + next);
         }
         throw new Error("Bybit-Demo-Verbindung fehlgeschlagen (HTTP " + status + "). Backend-Diagnose konnte die Oberfläche nicht lesen; Backend-Fehler: " + (error.message || "kein Detail") + ". Lade die Seite hart neu (Strg+F5) und teste erneut.");
       }
