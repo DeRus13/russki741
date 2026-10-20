@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="app-revision" content="bybit-diag-v9-20261020">
 <meta name="theme-color" content="#0b1020">
 <title>DeRus13 · KI Trading Agent</title>
 <style>
@@ -339,30 +340,38 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
         if (backend) {
           const diagnostic = backend.diagnostic || {};
           const attempts = Array.isArray(diagnostic.auth_attempts) ? diagnostic.auth_attempts : [];
-          const attemptText = attempts.map(item =>
-            (item.mode || "Auth") + ": HTTP " + (item.http_status ?? "?") +
-            (item.bybit_code != null ? ", Code " + item.bybit_code : "") +
-            (item.bybit_message ? " (" + item.bybit_message + ")" : "") +
-            (item.body_empty ? " — leere Antwort" : "")
-          ).join(" | ");
+          const attemptText = attempts.map(item => {
+            const headers = item.response_headers || {};
+            return (item.mode || "Auth") + ": HTTP " + (item.http_status ?? "?") +
+              (item.bybit_code != null ? ", Code " + item.bybit_code : "") +
+              (item.bybit_message ? " (" + item.bybit_message + ")" : "") +
+              (item.body_empty ? " — leere Antwort" : "") +
+              (item.body_bytes != null ? ", Body-Bytes " + item.body_bytes : "") +
+              (headers.server ? ", Server " + headers.server : "") +
+              (headers.cf_ray ? ", CF-Ray " + headers.cf_ray : "") +
+              (headers.content_type ? ", Content-Type " + headers.content_type : "") +
+              (item.request_timestamp_offset_ms != null ? ", Zeitabgleich " + item.request_timestamp_offset_ms + " ms" : "");
+          }).join(" | ");
           const publicText = diagnostic.public_endpoint_http_status != null
             ? "Öffentlicher Demo-Endpunkt: HTTP " + diagnostic.public_endpoint_http_status + ", Bybit-Code " + (diagnostic.public_endpoint_bybit_code ?? "?") + ". "
             : "";
           const next = backend.next_check ? " Nächste Prüfung: " + backend.next_check : "";
           throw new Error((backend.error || "Bybit-Demo-Verbindungstest fehlgeschlagen.") + " " + publicText + (attemptText ? "Authentifizierung: " + attemptText + "." : "") + next);
         }
-        throw new Error("Bybit-Demo-Verbindung fehlgeschlagen (HTTP " + status + "). Die Funktion lieferte keine lesbare Diagnose.");
+        throw new Error("Bybit-Demo-Verbindung fehlgeschlagen (HTTP " + status + "). Backend-Diagnose konnte die Oberfläche nicht lesen; Backend-Fehler: " + (error.message || "kein Detail") + ". Lade die Seite hart neu (Strg+F5) und teste erneut.");
       }
       if (!data || data.ok !== true) {
         const attempt = data?.diagnostic?.auth_attempts?.find(item => item.bybit_code != null);
         const detail = attempt ? " Bybit-Code: " + attempt.bybit_code + (attempt.bybit_message ? " (" + attempt.bybit_message + ")" : "") : "";
         throw new Error((data?.error || "Verbindungstest fehlgeschlagen.") + detail);
       }
-      const account = (data.balances || [])[0] || {};
+      const positionCheck = data.position_check || {};
       setStatus("status-bybit-demo", "Verbunden", "good");
       message("bybit-test-message",
-        "Bybit Demo erfolgreich authentifiziert. Konto: " + (account.account_type || "Unified") +
-        "; Equity: " + (account.total_equity ?? "nicht geliefert") +
+        "Bybit Demo erfolgreich authentifiziert. Positionsabfrage: " + (positionCheck.query_succeeded ? "erfolgreich" : "OK") +
+        "; offene Positionen: " + (positionCheck.open_position_count ?? "nicht geliefert") +
+        (Array.isArray(positionCheck.open_position_symbols) && positionCheck.open_position_symbols.length
+          ? " (" + positionCheck.open_position_symbols.join(", ") + ")" : "") +
         ". Keine Orders platziert, keine Auszahlungen versucht.", "success");
     } catch (err) {
       setStatus("status-bybit-demo", "Nicht verbunden", "bad");
