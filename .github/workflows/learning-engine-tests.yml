@@ -3,6 +3,7 @@ name: Trading learning engine tests
 on:
   pull_request:
     paths:
+      - "ki-agent-trading/v2/trading-agent-policy.ts"
       - "ki-agent-trading/v2/learning-engine.ts"
       - "ki-agent-trading/v2/learning-engine.test.ts"
       - "ki-agent-trading/v2/historical-data-adapter.ts"
@@ -31,6 +32,6 @@ jobs:
         with:
           deno-version: v2.x
       - name: Type-check research modules, exporter, and endpoint
-        run: deno check ki-agent-trading/v2/learning-engine.ts ki-agent-trading/v2/historical-data-adapter.ts ki-agent-trading/v2/learning-engine.test.ts ki-agent-trading/v2/historical-data-adapter.test.ts ki-agent-trading/v2/backfill-bybit-history.ts supabase/functions/trading-learning-research/index.ts
+        run: deno check ki-agent-trading/v2/trading-agent-policy.ts ki-agent-trading/v2/learning-engine.ts ki-agent-trading/v2/historical-data-adapter.ts ki-agent-trading/v2/learning-engine.test.ts ki-agent-trading/v2/historical-data-adapter.test.ts ki-agent-trading/v2/backfill-bybit-history.ts supabase/functions/trading-learning-research/index.ts
       - name: Run deterministic tests
         run: deno test ki-agent-trading/v2/learning-engine.test.ts ki-agent-trading/v2/historical-data-adapter.test.ts
