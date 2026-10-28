@@ -1,3 +1,4 @@
+import { TRADING_AGENT_POLICY } from "./trading-agent-policy.ts";
 import {
   assessCandidate,
   atr,
@@ -70,4 +71,22 @@ Deno.test("chronological split keeps earlier observations in training", async ()
   const split = chronologicalSplit(values, 0.7);
   if (split.train.join(",") !== "0,1,2,3,4,5,6") throw new Error("Training period order changed");
   if (split.test.join(",") !== "7,8,9") throw new Error("Test period must remain later in time");
+});
+
+Deno.test("persistent agent policy keeps trading research-only and risk bounded", () => {
+  if (TRADING_AGENT_POLICY.mode !== "research_and_paper_only") throw new Error("Unexpected policy mode");
+  if (TRADING_AGENT_POLICY.liveOrdersEnabled) throw new Error("Live orders must remain disabled");
+  if (TRADING_AGENT_POLICY.risk.targetRiskPerTradePct > TRADING_AGENT_POLICY.risk.hardMaxRiskPerTradePct) {
+    throw new Error("Target risk exceeds hard cap");
+  }
+  if (TRADING_AGENT_POLICY.risk.maxDrawdownPct > 10) throw new Error("Drawdown limit exceeds 10%");
+  if (!TRADING_AGENT_POLICY.research.requireUntouchedOutOfSampleEvaluation ||
+      !TRADING_AGENT_POLICY.research.requireWalkForwardEvaluation ||
+      !TRADING_AGENT_POLICY.research.includeFeesAndSlippage) {
+    throw new Error("Required research safeguards missing");
+  }
+  if (!TRADING_AGENT_POLICY.promotionGates.humanApprovalRequired ||
+      TRADING_AGENT_POLICY.research.autoPromoteStrategies) {
+    throw new Error("Strategy promotion must require human review");
+  }
 });
