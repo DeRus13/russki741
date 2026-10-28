@@ -63,3 +63,11 @@ Deno.test("candidate gate rejects weak or insufficient samples", () => {
   if (result.eligibleForPaperReview) throw new Error("Poor candidate must not pass");
   if (!result.reasons.length) throw new Error("Expected rejection reasons");
 });
+
+Deno.test("chronological split keeps earlier observations in training", async () => {
+  const { chronologicalSplit } = await import("./learning-engine.ts");
+  const values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const split = chronologicalSplit(values, 0.7);
+  if (split.train.join(",") !== "0,1,2,3,4,5,6") throw new Error("Training period order changed");
+  if (split.test.join(",") !== "7,8,9") throw new Error("Test period must remain later in time");
+});
