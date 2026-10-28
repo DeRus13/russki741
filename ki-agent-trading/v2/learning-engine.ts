@@ -259,10 +259,14 @@ export function backtest(candles: Candle[], overrides: Partial<EngineConfig> = {
       const c = candles[j];
       // Conservative intrabar mark-to-market for drawdown diagnostics: use the
       // adverse extreme of each candle while the position is open.
+      const favorablePrice = side === "long" ? c.high : c.low;
       const adversePrice = side === "long" ? c.low : c.high;
-      const unrealized = (adversePrice - entry) * quantity * (side === "long" ? 1 : -1);
-      const estimatedExitFee = adversePrice * quantity * config.feeBpsPerSide / 10_000;
-      equityCurve.push(equity + unrealized - estimatedExitFee);
+      const direction = side === "long" ? 1 : -1;
+      const estimatedExitFee = (price: number) => price * quantity * config.feeBpsPerSide / 10_000;
+      // Favorable extreme first, adverse extreme second: when intrabar ordering
+      // is unknowable, this deliberately errs toward a larger peak-to-trough DD.
+      equityCurve.push(equity + (favorablePrice - entry) * quantity * direction - estimatedExitFee(favorablePrice));
+      equityCurve.push(equity + (adversePrice - entry) * quantity * direction - estimatedExitFee(adversePrice));
       const stopTouched = side === "long" ? c.low <= stop : c.high >= stop;
       const targetTouched = side === "long" ? c.high >= target : c.low <= target;
       if (stopTouched) {
