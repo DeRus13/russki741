@@ -71,6 +71,11 @@ Deno.serve(async (req: Request) => {
     if (!Number.isFinite(Date.parse(from)) || !Number.isFinite(Date.parse(to)) || Date.parse(from) >= Date.parse(to)) {
       return json({ ok: false, error: "Provide a valid ISO date range with from earlier than to." }, 400);
     }
+    const maxDays = timeframe === "1m" ? 30 : timeframe === "3m" ? 90 : 180;
+    if (Date.parse(to) - Date.parse(from) > maxDays * 24 * 60 * 60 * 1000) {
+      return json({ ok: false, error: `Date range exceeds the ${maxDays}-day limit for ${timeframe}. Use the offline historical exporter for multi-year research.` }, 413);
+    }
+
     // Exclude the currently forming candle by rounding the end down to the last
     // fully closed interval. The caller still supplies the research date range.
     const now = Date.now();
