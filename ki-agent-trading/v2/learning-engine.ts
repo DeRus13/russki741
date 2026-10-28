@@ -226,7 +226,6 @@ export function backtest(candles: Candle[], overrides: Partial<EngineConfig> = {
   let feesPaid = 0;
   let peak = equity;
   let blockedByDrawdown = false;
-  const roundTripBps = (config.feeBpsPerSide + config.slippageBpsPerSide) * 2;
   const warmup = Math.max(config.warmupCandles, 30);
 
   for (let i = warmup; i < candles.length - 1; i++) {
@@ -258,6 +257,12 @@ export function backtest(candles: Candle[], overrides: Partial<EngineConfig> = {
     let exitIndex = candles.length - 1;
     for (let j = i + 1; j < candles.length; j++) {
       const c = candles[j];
+      // Conservative intrabar mark-to-market for drawdown diagnostics: use the
+      // adverse extreme of each candle while the position is open.
+      const adversePrice = side === "long" ? c.low : c.high;
+      const unrealized = (adversePrice - entry) * quantity * (side === "long" ? 1 : -1);
+      const estimatedExitFee = adversePrice * quantity * config.feeBpsPerSide / 10_000;
+      equityCurve.push(equity + unrealized - estimatedExitFee);
       const stopTouched = side === "long" ? c.low <= stop : c.high >= stop;
       const targetTouched = side === "long" ? c.high >= target : c.low <= target;
       if (stopTouched) {
