@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { backtest } from "../../../ki-agent-trading/v2/learning-engine.ts";
+import { TRADING_AGENT_POLICY } from "../../../ki-agent-trading/v2/trading-agent-policy.ts";
 import { auditCandleGaps, storedRowsToCandles, type StoredCandle } from "../../../ki-agent-trading/v2/historical-data-adapter.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -76,6 +77,7 @@ Deno.serve(async (req: Request) => {
     return json({
       ok: true,
       mode: "research_only",
+      policy: TRADING_AGENT_POLICY,
       market,
       timeframe,
       requested_range: { from, to },
@@ -84,7 +86,7 @@ Deno.serve(async (req: Request) => {
       metrics: result.metrics,
       blocked: result.blocked,
       blockReasons: result.blockReasons,
-      notes: [...result.notes, "This endpoint is read-only: it does not write to the database, create signals, or place orders."],
+      notes: [...result.notes, "This endpoint is read-only: it does not write to the database, create signals, or place orders.", "Policy is returned for transparency; this endpoint only evaluates research and does not execute trades."],
     });
   } catch (error) {
     return json({ ok: false, error: error instanceof Error ? error.message : "Unknown error" }, 500);
