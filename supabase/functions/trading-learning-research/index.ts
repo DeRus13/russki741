@@ -5,6 +5,7 @@ import { auditCandleGaps, storedRowsToCandles, type StoredCandle } from "../../.
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const RESEARCH_TOKEN = Deno.env.get("TRADING_RESEARCH_TOKEN") || "";
 const MARKETS = new Set(["BTCUSDT", "ETHUSDT", "SOLUSDT"]);
 const TIMEFRAMES = new Map([["1m", 1], ["3m", 3], ["5m", 5]]);
 const PAGE_SIZE = 1000;
