@@ -11,7 +11,8 @@ This branch adds a pure TypeScript research module. It is not wired into the liv
 - Trade-level ledger and metrics: net PnL, win rate, profit factor, fees, average trade and max drawdown.
 - Chronological split helper and basic candidate gates for out-of-sample evaluation.
 - Read-only historical candle conversion and gap audit in `historical-data-adapter.ts`.
-- Draft `supabase/functions/trading-learning-research/index.ts`: allow-listed market/timeframe, paginated read-only candle fetch, closed-candle cutoff, quality gate, research metrics response; no database writes or orders.
+- Persistent machine-readable operating policy in `trading-agent-policy.ts`: virtual balance 10,000 USDT, BTC/ETH/SOL Spot research, 1-minute scan and 5-minute evaluation targets, 0.25% target risk (0.5% hard cap), 10% drawdown ceiling, no leverage/overlapping positions, cost-aware out-of-sample and walk-forward gates, and manual approval before any promotion.
+- Draft `supabase/functions/trading-learning-research/index.ts`: allow-listed market/timeframe, paginated read-only candle fetch, closed-candle cutoff, quality gate, research metrics response, and policy returned alongside results; no database writes or orders.
 
 ## Safety and limitations
 - Research-only; no exchange API, secrets, database writes, or order execution.
@@ -19,6 +20,7 @@ This branch adds a pure TypeScript research module. It is not wired into the liv
 - Input candles must be sorted ascending and contain OHLCV values. Use only closed candles.
 - A strategy must be tested on separate time periods and multiple market regimes. Tune only on the training period; evaluate on untouched out-of-sample data; then use walk-forward tests.
 - Fee/slippage defaults are illustrative and must be replaced with measured values. Funding, market impact, partial fills and higher-timeframe confirmation are not implemented in this first module.
+- The persistent policy is returned by the research endpoint for transparency; this does not mean the existing live dashboard or scanner consumes it yet.
 - Do not auto-promote candidates or switch real orders on. Existing 10% drawdown cap and simulation-only controls must remain authoritative.
 
 ## Suggested integration sequence
