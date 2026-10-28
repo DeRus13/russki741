@@ -3,31 +3,30 @@
 > This file is the shared checkpoint for ChatGPT Free and Claude Free. Update it at the end of a work session. Do not store secrets, private customer data, API keys, tokens, or personal records here.
 
 ## Current checkpoint
-- Status: READY_FOR_USER_TASK
+- Status: HANDOFF_TEST_IN_PROGRESS
 - Active project: `DeRus13/russki741` (repository/workflow setup only; do not assume other projects live here)
 - Active branch: `setup/shared-ai-workflow`
 - Last verified base branch: `main`
 - Last verified main commit: `86df1292a53702cb7fec4e399602788886ca1d64`
-- Last verified workflow branch commit before this handoff setup: `46195e55794fee20029132a58041a3436f102b44`
 - Current goal: establish a safe, free, iPhone-friendly handoff between ChatGPT Free and Claude Free.
-- Verified result: `AI_WORKFLOW.md` exists on the workflow branch; draft PR #1 is open. Main has not been changed by that PR.
-- Automation limitation: GitHub can store the shared checkpoint, but cannot directly read ChatGPT/Claude chat usage limits. Fully automatic model switching is not verified and must not be claimed.
-- Next action: use `AI_HANDOFF_PROMPT.md` to resume work; sync the relevant repository files in Claude before asking it to continue.
-
-## Task record (replace this section for each task)
-- Task:
+- Test marker: `HANDOFF-TEST-2810-7Q4K`
+- Task: Verify that the updated shared checkpoint can be fetched directly from GitHub by ChatGPT.
 - Acceptance criteria:
-- In-scope files:
-- Out-of-scope files/data:
-- Last confirmed action:
-- Files changed and branch:
-- Tests/checks actually run:
-- Results:
-- Risks / cost:
-- Remaining work:
-- Exact next action:
-- Approval needed before:
-- Last updated (UTC):
+  1. Fetch this file from branch `setup/shared-ai-workflow`, not from the chat text.
+  2. Report the test marker exactly.
+  3. Summarize the checkpoint in 3–5 bullets.
+  4. State the exact next action and do not repeat completed work.
+- In-scope file: `AI_HANDOFF.md` only.
+- Out of scope: `main`, other files, secrets, databases, deployments, merging PR #1, and enabling GitHub Actions.
+- Last confirmed action: ChatGPT fetched the prior version of this file directly from GitHub; that version did not contain the marker.
+- Files changed and branch: `AI_HANDOFF.md` on `setup/shared-ai-workflow` only.
+- Tests/checks actually run: Direct GitHub fetch before this update; post-update fetch is the next verification step.
+- Results: NOT VERIFIED until the updated file is fetched again from GitHub and the marker/status are confirmed.
+- Risks / cost: No paid APIs or GitHub Actions are needed for this manual test. A ChatGPT-authored update can verify repository write/read access but does not independently prove Claude-to-ChatGPT handoff.
+- Remaining work: Fetch this file again from GitHub; then, if the marker is confirmed, record that read-back result and reset status to `READY_FOR_USER_TASK`.
+- Exact next action: ChatGPT must re-fetch this exact file from `setup/shared-ai-workflow`, verify the marker and status, summarize the checkpoint in 3–5 bullets, and state the next action.
+- Approval needed before: Any merge, deployment, production data change, secret change, or edit to any other file.
+- Last updated (UTC): 2026-10-28
 
 ## Handoff rules
 1. Record only confirmed facts. Mark anything untested as NOT VERIFIED.
