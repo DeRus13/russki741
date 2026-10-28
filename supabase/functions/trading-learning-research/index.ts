@@ -28,8 +28,7 @@ async function fetchCandles(market: string, timeframe: string, from: string, to:
     url.searchParams.set("select", "candle_open,open_price,high_price,low_price,close_price,volume");
     url.searchParams.set("market", `eq.${market}`);
     url.searchParams.set("timeframe", `eq.${timeframe}`);
-    url.searchParams.set("candle_open", `gte.${from}`);
-    url.searchParams.append("candle_open", `lte.${to}`);
+    url.searchParams.set("and", `(candle_open.gte.${from},candle_open.lte.${to})`);
     url.searchParams.set("order", "candle_open.asc");
     const response = await fetch(url.toString(), {
       headers: { ...headers, Range: `${offset}-${offset + PAGE_SIZE - 1}` },
