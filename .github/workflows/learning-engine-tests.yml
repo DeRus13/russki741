@@ -1,0 +1,29 @@
+name: Trading learning engine tests
+
+on:
+  pull_request:
+    paths:
+      - "ki-agent-trading/v2/learning-engine.ts"
+      - "ki-agent-trading/v2/learning-engine.test.ts"
+      - ".github/workflows/learning-engine-tests.yml"
+  push:
+    branches:
+      - "feat/trading-learning-engine-20261028"
+    paths:
+      - "ki-agent-trading/v2/learning-engine.ts"
+      - "ki-agent-trading/v2/learning-engine.test.ts"
+      - ".github/workflows/learning-engine-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Run deterministic tests
+        run: deno test --no-check ki-agent-trading/v2/learning-engine.test.ts
