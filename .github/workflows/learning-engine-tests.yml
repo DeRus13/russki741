@@ -28,5 +28,7 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+      - name: Type-check research modules and endpoint
+        run: deno check ki-agent-trading/v2/learning-engine.ts ki-agent-trading/v2/historical-data-adapter.ts ki-agent-trading/v2/learning-engine.test.ts ki-agent-trading/v2/historical-data-adapter.test.ts supabase/functions/trading-learning-research/index.ts
       - name: Run deterministic tests
-        run: deno test --no-check ki-agent-trading/v2/learning-engine.test.ts ki-agent-trading/v2/historical-data-adapter.test.ts
+        run: deno test ki-agent-trading/v2/learning-engine.test.ts ki-agent-trading/v2/historical-data-adapter.test.ts
