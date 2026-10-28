@@ -16,10 +16,17 @@ const headers = {
   "Accept-Profile": "ai_agents",
 };
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "https://derus13.github.io",
+  "Access-Control-Allow-Headers": "content-type, x-research-token",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Vary": "Origin",
+};
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "content-type": "application/json", "Cache-Control": "no-store" },
+    headers: { ...corsHeaders, "content-type": "application/json", "Cache-Control": "no-store" },
   });
 }
 
@@ -45,7 +52,13 @@ async function fetchCandles(market: string, timeframe: string, from: string, to:
 }
 
 Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders });
   if (req.method !== "POST") return json({ ok: false, error: "Use POST." }, 405);
+  if (!RESEARCH_TOKEN) return json({ ok: false, error: "Research endpoint is not configured: TRADING_RESEARCH_TOKEN secret is missing." }, 503);
+  const suppliedToken = req.headers.get("x-research-token") || "";
+  if (suppliedToken.length !== RESEARCH_TOKEN.length || suppliedToken !== RESEARCH_TOKEN) {
+    return json({ ok: false, error: "Unauthorized research request." }, 401);
+  }
   try {
     const body = await req.json();
     const market = String(body.market ?? "");
