@@ -50,7 +50,7 @@ $("#research-form").addEventListener("submit",async ev=>{
   const data=await response.json().catch(()=>({ok:false,error:"Antwort war kein gültiges JSON."}));
   if(!response.ok||!data.ok)throw new Error(data.error||("HTTP "+response.status)+(data.gapAudit?" · Datenqualität: "+JSON.stringify(data.gapAudit):""));
   const m=data.metrics||{};
-  $("#status").textContent="Fertig · "+data.market+" · "+data.timeframe+"\nDaten: "+data.observed_range.from+" bis "+data.observed_range.to+"\nKerzen: "+(data.gapAudit?.candles??"siehe Audit")+".";
+  $("#status").textContent="Fertig · "+data.market+" · "+data.timeframe+"\nDaten: "+data.observed_range.from+" bis "+data.observed_range.to+"\nKerzen: "+(data.gapAudit?.rows??"siehe Audit")+".";
   $("#metrics").innerHTML=metric("Endkapital",fmt(m.endingBalance)+" USDT")+metric("Nettoergebnis",fmt(m.netPnl)+" USDT")+metric("Rendite",fmt(m.returnPct)+" %")+metric("Trades",String(m.trades??0))+metric("Trefferquote",m.winRate==null?"–":fmt(m.winRate*100)+" %")+metric("Profit Factor",m.profitFactor==null?"–":fmt(m.profitFactor))+metric("Max. Drawdown",fmt(m.maxDrawdownPct)+" %")+metric("Gebühren",fmt(m.feesPaid)+" USDT");
   const notes=[...(data.notes||[]),...(data.blockReasons||[])];
   $("#details").innerHTML="<p><b>Bewertung:</b> "+(data.blocked?"Test gesperrt / nicht freigegeben":"Nur Research-Ergebnis; keine Strategieübernahme")+"</p>"+(notes.length?"<ul>"+notes.map(n=>"<li>"+String(n).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))+"</li>").join("")+"</ul>":"");
