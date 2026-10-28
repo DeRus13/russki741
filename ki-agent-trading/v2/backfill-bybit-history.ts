@@ -98,7 +98,7 @@ async function exportSeries(
   endMs: number,
   outputDir: string,
 ): Promise<void> {
-  const unique = new Map<number, BybitKline[]>();
+  const unique = new Map<number, BybitKline>();
   let cursorEnd = endMs;
   let pages = 0;
 
