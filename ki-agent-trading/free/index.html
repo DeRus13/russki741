@@ -36,7 +36,7 @@
 const $=id=>document.getElementById(id);
 const cfgKey="ki-trading-lab-config-v1";let session=null;let deferredInstall=null;
 function say(msg){$("log").textContent=msg}
-function cfg(){try{return JSON.parse(localStorage.getItem(cfgKey)||"{}")}catch{return {}}}
+function cfg(){const defaults={url:"https://bajvhowasdmliztvguef.supabase.co",anon:"sb_publishable_36q39zpw6pnh8GAa2tJ04A_REFWlwct",email:"ivan8shnebel@icloud.com"};try{return {...defaults,...JSON.parse(localStorage.getItem(cfgKey)||"{}")}}catch{return defaults}}
 function saveCfg(){const c={url:$("url").value.trim().replace(/\/$/,""),anon:$("anon").value.trim(),email:$("email").value.trim()};localStorage.setItem(cfgKey,JSON.stringify(c));say("Konfiguration lokal gespeichert. Noch nicht verbunden.");}
 function loadCfg(){const c=cfg();$("url").value=c.url||"";$("anon").value=c.anon||"";$("email").value=c.email||""}
 function headers(){const c=cfg();return {"apikey":c.anon,"Authorization":"Bearer "+(session?.access_token||c.anon),"Content-Type":"application/json"}}
