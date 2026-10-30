@@ -78,7 +78,7 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
    <div class="status-row"><div><b>Trefferquote</b><div class="small">Nur falls geschlossene Trades vorhanden sind</div></div><b id="sim-winrate">—</b></div>
   </section>
  </div>
- <section class="card full"><div class="feed-head"><div><h2 class="section-title" style="margin-bottom:4px">Live-Trading-Aktivität</h2><div class="small">Virtuelle Positionen und abgeschlossene Simulationstrades · automatische Aktualisierung</div></div><span id="activity-updated" class="activity-status">Warte auf Daten</span></div><div class="table-wrap"><table style="min-width:760px"><thead><tr><th>Zeit</th><th>Markt</th><th>Richtung</th><th>Status</th><th>Einstieg</th><th>Ausstieg</th><th>Menge</th><th>PnL</th></tr></thead><tbody id="activity"><tr><td colspan="8" class="empty">Lade Trading-Aktivität …</td></tr></tbody></table></div><div class="small" style="margin-top:10px">„Offen“ bedeutet virtuelle Simulation – keine Bybit-Order. PnL wird nur für geschlossene Positionen angezeigt.</div></section>
+ <section class="card full"><div class="feed-head"><div><h2 class="section-title" style="margin-bottom:4px">Live-Trading-Monitor</h2><div class="small">Positionen, letzter Marktpreis, Stop/Target und Trade-Verlauf · Aktualisierung alle 15 Sekunden</div></div><span id="activity-updated" class="activity-status">Warte auf Daten</span></div><div class="table-wrap"><table style="min-width:1120px"><thead><tr><th>Zeit</th><th>Markt</th><th>Richtung</th><th>Status</th><th>Einstieg</th><th>Letzter Kurs</th><th>Stop-Loss</th><th>Take-Profit</th><th>Ausstieg</th><th>Menge</th><th>Confidence</th><th>PnL</th></tr></thead><tbody id="activity"><tr><td colspan="12" class="empty">Lade Trading-Aktivität …</td></tr></tbody></table></div><div class="small" style="margin-top:10px">„Offen“ bedeutet virtuelle Simulation – keine Bybit-Order. PnL wird nur für geschlossene Positionen angezeigt.</div></section>
  <section class="card full"><h2 class="section-title">Nachrichten · Makro · Geopolitik</h2><div class="small">Neueste gespeicherte Einträge aus den angebundenen RSS-Feeds</div><div id="news"><div class="empty">Lade Nachrichten …</div></div></section>
  <section class="card full"><h2 class="section-title">Letzte Agentenläufe</h2><div class="table-wrap"><table><thead><tr><th>Agentenlauf</th><th>Status</th><th>Gestartet</th><th>Beendet</th></tr></thead><tbody id="runs"><tr><td colspan="4" class="empty">Lade Ausführungen …</td></tr></tbody></table></div></section>
  <p class="small" id="updated-at" style="text-align:right;margin-top:10px">Noch nicht aktualisiert</p>
@@ -154,18 +154,22 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
       return '<article class="feed"><div class="feed-head"><div><b>'+title+'</b><div class="small">'+source+' · '+escapeHtml(fmtDate(item.published_at))+'</div></div><div class="small">'+(item.market_impact_score == null ? "" : "Impact "+Math.round(Number(item.market_impact_score)*100)+"%")+'</div></div>'+(summary ? '<p class="muted" style="font-size:13px;margin:7px 0">'+summary+'</p>' : '')+'<div class="feed-head"><span class="small">'+topics+'</span>'+link+'</div></article>';
     }).join("");
   };
-  const renderActivity = data => {
+  const renderActivity = (data, candles=[]) => {
     if (!Array.isArray(data) || !data.length) {
-      $("activity").innerHTML = '<tr><td colspan="8" class="empty">Noch keine simulierten Trades gespeichert. Der Agent wartet auf ein gültiges Signal.</td></tr>';
+      $("activity").innerHTML = '<tr><td colspan="12" class="empty">Noch keine offenen oder abgeschlossenen Simulationstrades in der Anzeige.</td></tr>';
       $("activity-updated").textContent = "Keine Trades";
       return;
     }
+    const latestByMarket = new Map((Array.isArray(candles) ? candles : []).filter(c => c.timeframe === "1m").map(c => [c.market, c]));
     $("activity").innerHTML = data.map(t => {
       const open = t.status === "open";
       const side = t.side === "long" ? "LONG" : "SHORT";
       const pnl = t.realized_pnl == null ? "—" : number(t.realized_pnl, 4) + " USDT";
       const pnlClass = Number(t.realized_pnl || 0) > 0 ? "positive" : Number(t.realized_pnl || 0) < 0 ? "negative" : "";
-      return '<tr><td>'+escapeHtml(fmtDate(t.closed_at || t.opened_at))+'</td><td><b>'+escapeHtml(t.market)+'</b></td><td class="'+(side==="LONG"?"side-long":"side-short")+'">'+side+'</td><td class="'+(open?"trade-open":"trade-closed")+'">'+(open?"● OFFEN":"GESCHLOSSEN")+'</td><td>'+escapeHtml(number(t.entry_price,4))+'</td><td>'+escapeHtml(t.exit_price == null ? "—" : number(t.exit_price,4))+'</td><td>'+escapeHtml(number(t.quantity,6))+'</td><td class="'+pnlClass+'">'+escapeHtml(pnl)+'</td></tr>';
+      const candle = latestByMarket.get(t.market);
+      const mark = candle?.close_price == null ? "—" : number(candle.close_price,4);
+      const confidence = t.metadata?.signal_confidence == null ? "—" : number(Number(t.metadata.signal_confidence)*100,0)+"%";
+      return '<tr><td>'+escapeHtml(fmtDate(t.closed_at || t.opened_at))+'</td><td><b>'+escapeHtml(t.market)+'</b></td><td class="'+(side==="LONG"?"side-long":"side-short")+'">'+side+'</td><td class="'+(open?"trade-open":"trade-closed")+'">'+(open?"● OFFEN":"GESCHLOSSEN")+'</td><td>'+escapeHtml(number(t.entry_price,4))+'</td><td>'+escapeHtml(mark)+'</td><td>'+escapeHtml(number(t.stop_loss,4))+'</td><td>'+escapeHtml(number(t.take_profit,4))+'</td><td>'+escapeHtml(t.exit_price == null ? "—" : number(t.exit_price,4))+'</td><td>'+escapeHtml(number(t.quantity,6))+'</td><td>'+escapeHtml(confidence)+'</td><td class="'+pnlClass+'">'+escapeHtml(pnl)+'</td></tr>';
     }).join("");
     $("activity-updated").textContent = "Aktualisiert " + new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
   };
@@ -204,7 +208,7 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
       $("sim-pnl").className = Number(sim.net_pnl_sampled || 0) > 0 ? "positive" : Number(sim.net_pnl_sampled || 0) < 0 ? "negative" : "";
       $("sim-winrate").textContent = sim.win_rate_sampled == null ? "—" : number(Number(sim.win_rate_sampled)*100,1) + "%";
       renderSignals(data.latest_signals || []);
-      renderActivity(data.recent_activity || []);
+      renderActivity(data.recent_activity || [], data.latest_candles || []);
       renderNews(data.recent_news || []);
       renderRuns(data.recent_runs || []);
       $("updated-at").textContent = "Dashboard aktualisiert: " + fmtDate(data.generated_at) + " · Signale: " + age(data.freshness?.latest_signal_at) + " · Nachrichten: " + age(data.freshness?.latest_news_at);
