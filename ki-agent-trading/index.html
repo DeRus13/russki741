@@ -56,7 +56,7 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
  <div id="dashboard-message" aria-live="polite"></div>
  <section class="grid">
   <div class="card"><div class="metric-label">Aktive Agenten</div><div id="metric-agents" class="metric">—</div><div id="metric-agents-note" class="small">Lade Status …</div></div>
-  <div class="card"><div class="metric-label">Virtuelles Startkapital</div><div id="metric-balance" class="metric">—</div><div class="small">Simulation, kein echtes Guthaben</div></div>
+  <div class="card"><div class="metric-label">Aktuelles virtuelles Guthaben</div><div id="metric-balance" class="metric">—</div><div id="metric-balance-note" class="small">Simulation · wird live aus Startkapital + realisiertem Ergebnis berechnet</div></div>
   <div class="card"><div class="metric-label">Max. Drawdown-Limit</div><div id="metric-drawdown" class="metric">—</div><div class="small">Serverseitige Konfiguration</div></div>
   <div class="card"><div class="metric-label">Letzter Agentenlauf</div><div id="metric-run" class="metric" style="font-size:20px">—</div><div id="metric-run-note" class="small">Lade Status …</div></div>
  </section>
@@ -193,7 +193,12 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
       const risk = data.risk || {};
       $("metric-agents").textContent = active + " / " + agents.length;
       $("metric-agents-note").textContent = agents.filter(a => a.execution_mode === "simulation_only").length + " im Simulationsmodus";
-      $("metric-balance").textContent = money(risk.starting_virtual_balance, "USDT");
+      const sim = data.simulation || {};
+      const startBalance = Number(risk.starting_virtual_balance || 0);
+      const realizedPnl = Number(sim.net_pnl_sampled || 0);
+      const virtualBalance = startBalance + realizedPnl;
+      $("metric-balance").textContent = money(virtualBalance, "USDT");
+      $("metric-balance-note").textContent = "Start " + money(startBalance, "USDT") + " · Ergebnis " + money(realizedPnl, "USDT") + " · Simulation, kein echtes Guthaben";
       $("metric-drawdown").textContent = risk.max_drawdown_percent == null ? "—" : number(risk.max_drawdown_percent,0) + "%";
       const lastRun = (data.recent_runs || [])[0];
       $("metric-run").textContent = lastRun ? String(lastRun.status || "—").toUpperCase() : "—";
@@ -202,7 +207,6 @@ main{max-width:1180px;margin:auto;padding:26px 18px 44px}.top{display:flex;align
       setStatus("status-market", (data.latest_candles || []).length ? "Daten gespeichert" : "Keine Kerzen", (data.latest_candles || []).length ? "good" : "neutral");
       $("status-orders").innerHTML = risk.real_orders_enabled ? '<span class="negative">Aktiviert</span>' : '<span class="positive">Deaktiviert</span>';
       $("status-withdrawals").innerHTML = risk.withdrawals_enabled ? '<span class="negative">Aktiviert</span>' : '<span class="positive">Deaktiviert</span>';
-      const sim = data.simulation || {};
       $("sim-trades").textContent = String(sim.closed_trades_sampled ?? 0);
       $("sim-pnl").textContent = money(sim.net_pnl_sampled, "USDT");
       $("sim-pnl").className = Number(sim.net_pnl_sampled || 0) > 0 ? "positive" : Number(sim.net_pnl_sampled || 0) < 0 ? "negative" : "";
