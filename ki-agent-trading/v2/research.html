@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Trading-Agent · Research</title>
+<style>
+:root{color-scheme:light dark;font:16px/1.5 system-ui,-apple-system,sans-serif;--bg:#f2f4f1;--surface:#fff;--ink:#16211e;--muted:#52615b;--line:#dce2de;--accent:#0c6a5d}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1513;--surface:#161f1c;--ink:#e6ece9;--muted:#b0bcb6;--line:#334440;--accent:#4fc3ae}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}main{max-width:900px;margin:auto;padding:20px}h1{font-size:1.6rem}h2{font-size:1.15rem;margin-top:0}.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}label{display:block;font-weight:600;font-size:.9rem}input,select,button{font:inherit;width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);margin-top:5px}button{background:var(--accent);color:white;font-weight:700;cursor:pointer;border:0;margin-top:14px}button:disabled{opacity:.55}small,.muted{color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.metric{border:1px solid var(--line);border-radius:8px;padding:12px}.metric b{display:block;font-size:1.2rem;overflow-wrap:anywhere}.status{white-space:pre-wrap;overflow-wrap:anywhere}.good{color:#24844c}.bad{color:#d0443b}ul{padding-left:22px}a{color:var(--accent)}
+</style>
+</head>
+<body><main>
+<p><a href="./index.html">← Zurück zum Trading-Dashboard</a></p>
+<h1>Strategie-Research & Backtest</h1>
+<p class="muted">Nur Forschung mit historischen Kerzen. Keine Orders, keine Datenbankänderungen und keine automatische Strategieübernahme.</p>
+<div class="card">
+<h2>Test konfigurieren</h2>
+<p class="muted">Der Research-Zugangscode wird nur für diese Anfrage verwendet und nicht gespeichert. Er muss zuvor als Supabase-Secret <code>TRADING_RESEARCH_TOKEN</code> eingerichtet sein.</p>
+<form id="research-form">
+<div class="grid">
+<div><label for="token">Research-Zugangscode</label><input id="token" type="password" autocomplete="off" required></div>
+<div><label for="market">Markt</label><select id="market"><option>BTCUSDT</option><option>ETHUSDT</option><option>SOLUSDT</option></select></div>
+<div><label for="timeframe">Kerzenintervall</label><select id="timeframe"><option>1m</option><option>3m</option><option>5m</option></select></div>
+<div><label for="from">Von (UTC)</label><input id="from" type="date" required></div>
+<div><label for="to">Bis (UTC)</label><input id="to" type="date" required></div>
+</div>
+<button id="run" type="submit">Backtest starten</button>
+</form>
+</div>
+<div class="card" aria-live="polite"><h2>Ergebnis</h2><div id="status" class="status muted">Noch kein Test gestartet.</div><div id="metrics" class="metrics"></div><div id="details"></div></div>
+<div class="card"><h2>Sicherheitsregeln</h2><ul><li>10.000 USDT virtuelles Startkapital.</li><li>0,25 % Zielrisiko je Trade, harte Obergrenze 0,5 %.</li><li>Abbruch bei 10 % Drawdown; kein Hebel und keine überlappenden Positionen.</li><li>Gebühren und Slippage werden berücksichtigt.</li><li>Ein positives Backtest-Ergebnis garantiert keine künftigen Gewinne. Keine automatische Freigabe oder Live-Ausführung.</li></ul></div>
+</main>
+<script>
+"use strict";
+const ENDPOINT="https://bajvhowasdmliztvguef.supabase.co/functions/v1/trading-learning-research";
+const $=s=>document.querySelector(s);
+const today=new Date();const iso=d=>d.toISOString().slice(0,10);
+$("#to").value=iso(today);const start=new Date(today);start.setUTCDate(start.getUTCDate()-7);$("#from").value=iso(start);
+const fmt=(v,d=2)=>Number.isFinite(v)?new Intl.NumberFormat("de-DE",{maximumFractionDigits:d,minimumFractionDigits:d}).format(v):"–";
+function metric(label,value){return '<div class="metric"><small>'+label+'</small><b>'+value+'</b></div>'}
+$("#research-form").addEventListener("submit",async ev=>{
+ ev.preventDefault();const button=$("#run");button.disabled=true;$("#metrics").innerHTML="";$("#details").innerHTML="";
+ $("#status").className="status muted";$("#status").textContent="Backtest läuft. Bitte diese Seite geöffnet lassen.";
+ try{
+  const from=$("#from").value+"T00:00:00.000Z";const to=$("#to").value+"T23:59:59.999Z";
+  if(Date.parse(from)>=Date.parse(to))throw new Error("Das Enddatum muss nach dem Startdatum liegen.");
+  const response=await fetch(ENDPOINT,{method:"POST",headers:{"content-type":"application/json","x-research-token":$("#token").value},body:JSON.stringify({market:$("#market").value,timeframe:$("#timeframe").value,from,to})});
+  const data=await response.json().catch(()=>({ok:false,error:"Antwort war kein gültiges JSON."}));
+  if(!response.ok||!data.ok)throw new Error(data.error||("HTTP "+response.status)+(data.gapAudit?" · Datenqualität: "+JSON.stringify(data.gapAudit):""));
+  const m=data.metrics||{};
+  $("#status").textContent="Fertig · "+data.market+" · "+data.timeframe+"\nDaten: "+data.observed_range.from+" bis "+data.observed_range.to+"\nKerzen: "+(data.gapAudit?.rows??"siehe Audit")+".";
+  $("#metrics").innerHTML=metric("Endkapital",fmt(m.endingBalance)+" USDT")+metric("Nettoergebnis",fmt(m.netPnl)+" USDT")+metric("Rendite",fmt(m.returnPct)+" %")+metric("Trades",String(m.trades??0))+metric("Trefferquote",m.winRate==null?"–":fmt(m.winRate*100)+" %")+metric("Profit Factor",m.profitFactor==null?"–":fmt(m.profitFactor))+metric("Max. Drawdown",fmt(m.maxDrawdownPct)+" %")+metric("Gebühren",fmt(m.feesPaid)+" USDT");
+  const notes=[...(data.notes||[]),...(data.blockReasons||[])];
+  $("#details").innerHTML="<p><b>Bewertung:</b> "+(data.blocked?"Test gesperrt / nicht freigegeben":"Nur Research-Ergebnis; keine Strategieübernahme")+"</p>"+(notes.length?"<ul>"+notes.map(n=>"<li>"+String(n).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))+"</li>").join("")+"</ul>":"");
+  $("#status").className="status good";
+ }catch(err){$("#status").className="status bad";$("#status").textContent="Test nicht abgeschlossen: "+String(err.message||err);}
+ finally{button.disabled=false;}
+});
+</script></body></html>
